@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxun.jms.dao.LoginMapper" >
+    <select id="studentLogin"  resultType="com.gxun.jms.pojo.Student" parameterType="java.lang.String">
+        SELECT * FROM student WHERE studentLoginID = #{studentLoginID} and studentPassword = #{studentPassword} and activeFlag = 1;
+    </select>
+
+    <select id="teacherLogin" resultType="com.gxun.jms.pojo.Teacher" parameterType="java.lang.String">
+        select * from teacher where teacherLoginID = #{teacherLoginID} and teacherPassword = #{teacherPassword} and activeFlag = 1;
+    </select>
+</mapper>

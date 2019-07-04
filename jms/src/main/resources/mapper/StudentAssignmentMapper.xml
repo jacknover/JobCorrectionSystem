@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxun.jms.dao.StudentAssignmentMapper" >
+    <select id="getDoneAssignment"  resultType="com.gxun.jms.pojo.StudentAssignment" parameterType="java.lang.Integer">
+        SELECT * FROM studentAssignment WHERE studentID = #{studentID} and assignSubmissionFlag = 1;
+    </select>
+
+    <select id="getUndoneAssignment" resultType="com.gxun.jms.pojo.StudentAssignment" parameterType="java.lang.Integer">
+        select * from studentAssignment where studentID = #{studentID} and assignSubmissionFlag = -1;
+    </select>
+
+    <select id="searchDoneAssignment" resultType="com.gxun.jms.pojo.StudentAssignment" >
+        SELECT * FROM studentAssignment
+        <where>
+            studentID = ${studentAssignment.studentID} AND assignSubmissionFlag = 1
+            <if test="studentAssignment.homeworkID!=0">
+              AND homeworkID=${studentAssignment.homeworkID}
+            </if>
+            <if test="studentAssignment.courseName!=null">
+                AND courseName like '%'+#{studentAssignment.courseName}+'%'
+            </if>
+            <if test="studentAssignment.teacherName!=null">
+                AND teacherName like '%'+#{studentAssignment.teacherName}+'%'
+            </if>
+            <if test= "studentAssignment.homeworkDescribe!=null">
+                AND homeworkDescribe like '%'+#{studentAssignment.homeworkDescribe}+'%'
+            </if>
+        </where>
+    </select>
+
+    <select id="searchUndoneAssignment" resultType="com.gxun.jms.pojo.StudentAssignment" >
+        SELECT * FROM studentAssignment
+        <where>
+            studentID = ${studentAssignment.studentID} AND assignSubmissionFlag = -1
+            <if test="studentAssignment.homeworkID!=0">
+                AND homeworkID=${studentAssignment.homeworkID}
+            </if>
+            <if test="studentAssignment.courseName!=null">
+                AND courseName like '%'+#{studentAssignment.courseName}+'%'
+            </if>
+            <if test="studentAssignment.teacherName!=null">
+                AND teacherName like '%'+#{studentAssignment.teacherName}+'%'
+            </if>
+            <if test= "studentAssignment.homeworkDescribe!=null">
+                AND homeworkDescribe like '%'+#{studentAssignment.homeworkDescribe}+'%'
+            </if>
+        </where>
+
+
+    </select>
+
+    <select id="getHomework" resultType="com.gxun.jms.pojo.HomeworkView">
+        SELECT *
+        FROM view_homework
+        WHERE studentID = ${studentID} AND homeworkID = ${homeworkID}
+    </select>
+
+    <update id="submitHomework">
+        UPDATE writeQuestion
+        SET studentAnswer = #{answer}
+        WHERE studentID = ${studentID} AND homeworkID = ${homeworkID} AND questionID = ${questionID}
+    </update>
+
+    <update id="confirmHomework">
+        UPDATE assign
+        SET assignSubmissionFlag = '1', assignSubmissionTime = #{time}
+        WHERE studentID = ${studentID} AND homeworkID = ${homeworkID}
+    </update>
+
+    <select id="getACollege" resultType="java.lang.String">
+        SELECT collegeName
+        FROM college
+        WHERE collegeID = #{collegeID}
+    </select>
+
+    <select id="getAClass" resultType="java.lang.String">
+        SELECT className
+        FROM class
+        WHERE classID = #{classID}
+    </select>
+
+    <update id="updatePassword">
+        UPDATE student
+        SET studentPassword = #{password}
+        WHERE studentID = #{studentID}
+    </update>
+</mapper>

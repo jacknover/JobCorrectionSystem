@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxun.jms.dao.TeacherAssignmentMapper" >
+    <select id="getDoneTeacherAssignment"  resultType="com.gxun.jms.pojo.StudentAssignment" parameterType="java.lang.Integer">
+        SELECT * FROM studentAssignment WHERE teacherID = #{teacherID} and assignCheckFlag = 1 and assignSubmissionFlag = 1;
+    </select>
+
+    <select id="getUndoneTeacherAssignment" resultType="com.gxun.jms.pojo.StudentAssignment" parameterType="java.lang.Integer">
+        select * from studentAssignment where teacherID = #{teacherID} and assignCheckFlag = 0;
+    </select>
+
+    <select id="searchDoneTeacherAssignment" resultType="com.gxun.jms.pojo.StudentAssignment" >
+        SELECT * FROM studentAssignment
+        <where>
+            teacherID = ${teacherAssignment.teacherID} AND assignSubmissionFlag = 1 AND assignCheckFlag = 1
+            <if test="teacherAssignment.studentName!=null">
+                AND studentName like '%'+#{teacherAssignment.studentName}+'%'
+            </if>
+            <if test="teacherAssignment.homeworkID!=0">
+                AND homeworkID=${teacherAssignment.homeworkID}
+            </if>
+            <if test="teacherAssignment.studentID!=0">
+                AND studentID=${teacherAssignment.studentID}
+            </if>
+            <if test="teacherAssignment.courseName!=null">
+                AND courseName like '%'+#{teacherAssignment.courseName}+'%'
+            </if>
+            <if test="teacherAssignment.className!=null">
+                AND className like '%'+#{teacherAssignment.className}+'%'
+            </if>
+            <if test= "teacherAssignment.homeworkDescribe!=null">
+                AND homeworkDescribe like '%'+#{teacherAssignment.homeworkDescribe}+'%'
+            </if>
+        </where>
+    </select>
+
+    <select id="searchUndoneTeacherAssignment" resultType="com.gxun.jms.pojo.StudentAssignment" >
+        SELECT * FROM studentAssignment
+        <where>
+            teacherID = ${teacherAssignment.teacherID} AND assignCheckFlag = 0
+            <if test="teacherAssignment.assignSubmissionFlag!=0">
+                AND assignSubmissionFlag=${teacherAssignment.assignSubmissionFlag}
+            </if>
+            <if test="teacherAssignment.homeworkID!=0">
+                AND homeworkID=${teacherAssignment.homeworkID}
+            </if>
+            <if test="teacherAssignment.studentID!=0">
+                AND studentID=${teacherAssignment.studentID}
+            </if>
+            <if test="teacherAssignment.studentName!=null">
+                AND studentName like '%'+#{teacherAssignment.studentName}+'%'
+            </if>
+            <if test="teacherAssignment.courseName!=null">
+                AND courseName like '%'+#{teacherAssignment.courseName}+'%'
+            </if>
+            <if test="teacherAssignment.className!=null">
+                AND className like '%'+#{teacherAssignment.className}+'%'
+            </if>
+            <if test= "teacherAssignment.homeworkDescribe!=null">
+                AND homeworkDescribe like '%'+#{teacherAssignment.homeworkDescribe}+'%'
+            </if>
+        </where>
+
+
+    </select>
+
+    <select id="getAllClass" resultType="com.gxun.jms.pojo.ClassBean">
+        SELECT *
+        FROM class
+
+    </select>
+
+    <select id="getAllCourse" resultType="com.gxun.jms.pojo.Course">
+        SELECT *
+        FROM course
+    </select>
+
+    <select id="getStudents" resultType="com.gxun.jms.pojo.Student">
+        SELECT *
+        FROM student
+        WHERE classID = #{classID} AND activeFlag = 1
+    </select>
+
+    <insert id="insertAssign">
+        INSERT INTO assign(teacherID, studentID, homeworkID, assignScore, assignExampleFlag, assignSubmissionFlag, assignCheckFlag, assignDeadTime)
+        VALUES(#{assignment.teacherID}, #{assignment.studentID}, #{assignment.homeworkID}, #{assignment.assignScore}, #{assignment.assignExampleFlag}, #{assignment.assignSubmissionFlag}, #{assignment.assignCheckFlag}, #{assignment.assignDeadTime})
+    </insert>
+
+    <insert id="insertHomework">
+        INSERT INTO homework(courseID, homeworkFullScore, homeworkDescribe)
+        VALUES(#{homework.courseID}, 100, #{homework.homeworkDescribe})
+    </insert>
+
+    <select id="getHomework" resultType="com.gxun.jms.pojo.Homework">
+        SELECT *
+        FROM homework
+        WHERE courseID = #{courseID} AND homeworkDescribe = #{homeworkName}
+    </select>
+
+    <select id="getQuestion" resultType="com.gxun.jms.pojo.Question">
+        SELECT * FROM question
+        <where>
+            courseID = ${question.courseID}
+            <if test="question.questionType!=0">
+                AND questionType=${question.questionType}
+            </if>
+            <if test="question.questionDifficulty!=0">
+                AND questionDifficulty=${question.questionDifficulty}
+            </if>
+            <if test="question.questionContent!=null">
+                AND questionContent like '%'+#{question.questionContent}+'%'
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertHomeworkContent">
+        INSERT INTO assignmentContent
+        VALUES(#{homeworkID}, #{questionNum})
+    </insert>
+
+    <insert id="insertWrite">
+        INSERT INTO writeQuestion(studentID, homeworkID, questionID)
+        VALUES(#{studentID}, #{homeworkID}, #{questionID})
+    </insert>
+
+    <select id="getStudentHomework" resultType="com.gxun.jms.pojo.HomeworkView">
+        SELECT *
+        FROM view_homework
+        WHERE studentID = #{studentID} AND homeworkID = #{homeworkID}
+    </select>
+
+    <update id="updateQuestionScore">
+        UPDATE writeQuestion
+        SET questionScore = #{writeQuestion.questionScore}
+        WHERE studentID = #{writeQuestion.studentID} AND homeworkID = #{writeQuestion.homeworkID} AND questionID = #{writeQuestion.questionID}
+    </update>
+
+    <update id="updateQuestionScoreTwo">
+        UPDATE assign
+        SET assignCheckFlag = '1', assignScore = #{score.assignScore}
+        WHERE teacherID = #{score.teacherID} AND studentID = #{score.studentID} AND homeworkID = #{score.homeworkID}
+    </update>
+
+    <update id="updatePassword">
+        UPDATE teacher
+        SET teacherPassword = #{password}
+        WHERE teacherID = #{teacherID}
+    </update>
+
+    <select id="getHomeworkDetail" resultType="com.gxun.jms.pojo.StudentAssignment">
+        SELECT *
+        FROM studentAssignment
+        WHERE className = #{className} AND homeworkID = #{homeworkID}
+    </select>
+</mapper>

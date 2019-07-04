@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxun.jms.dao.AdminMapper" >
+
+    <select id="getStudent" resultType="com.gxun.jms.pojo.StudentView">
+        SELECT *
+        FROM view_student
+        <where>
+            1 = 1
+            <if test="student!=null">
+            <if test="student.studentName!=null">
+                AND studentName like '%'+#{student.studentName}+'%'
+            </if>
+            <if test="student.studentID!=0">
+                AND studentID=${student.studentID}
+            </if>
+            <if test="student.classID!=0">
+                AND classID = ${student.studentID}
+            </if>
+            <if test="student.collegeID!=0">
+                AND collegeID = ${student.collegeID}
+            </if>
+            <if test="student.className!=null">
+                AND className like '%'+#{student.className}+'%'
+            </if>
+            <if test="student.collegeName!=null">
+                AND collegeName like '%'+#{student.collegeName}+'%'
+            </if>
+            <if test="student.activeFlag!=0">
+                AND activeFlag = ${student.activeFlag}
+            </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="getTeacher" resultType="com.gxun.jms.pojo.TeacherView">
+        SELECT *
+        FROM view_teacher
+        <where>
+            1 = 1
+            <if test="teacher!=null">
+                <if test="teacher.teacherName!=null">
+                    AND teacherName like '%'+#{teacher.teacherName}+'%'
+                </if>
+                <if test="teacher.teacherID!=0">
+                    AND teacherID=${teacher.teacherID}
+                </if>
+                <if test="teacher.collegeID!=0">
+                    AND collegeID = ${teacher.collegeID}
+                </if>
+                <if test="teacher.collegeName!=null">
+                    AND collegeName like '%'+#{teacher.collegeName}+'%'
+                </if>
+                <if test="teacher.activeFlag!=0">
+                    AND activeFlag = ${teacher.activeFlag}
+                </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="getCollege" resultType="com.gxun.jms.pojo.College">
+        SELECT *
+        FROM college
+    </select>
+
+    <insert id="insertStudent">
+        INSERT INTO student(studentName, collegeID, classID, studentPassword, activeFlag)
+        VALUES(#{student.studentName}, #{student.collegeID}, #{student.classID}, #{student.studentPassword}, 1)
+    </insert>
+
+    <select id="getAStudent" resultType="com.gxun.jms.pojo.Student">
+        SELECT *
+        FROM student
+        WHERE studentName = #{student.studentName} AND classID = #{student.classID}
+    </select>
+
+    <update id="insertStudentTwo">
+        UPDATE student
+        SET studentLoginID = #{student.studentLoginID}
+        WHERE studentID = #{student.studentID}
+    </update>
+
+    <insert id="insertTeacher">
+        INSERT INTO teacher(teacherName,collegeID,teacherPassword, activeFlag)
+        VALUES(#{teacher.teacherName}, #{teacher.collegeID},  #{teacher.teacherPassword}, 1)
+    </insert>
+
+    <select id="getATeacher" resultType="com.gxun.jms.pojo.Teacher">
+        SELECT *
+        FROM teacher
+        WHERE teacherName = #{teacher.teacherName} AND collegeID = #{teacher.collegeID}
+    </select>
+
+    <update id="insertTeacherTwo">
+        UPDATE teacher
+        SET teacherLoginID = #{teacher.teacherLoginID}
+        WHERE teacherID = #{teacher.teacherID}
+    </update>
+
+    <update id="deleteStudent">
+        UPDATE student
+        SET activeFlag = -1
+        WHERE studentID = #{studentID}
+    </update>
+
+    <update id="deleteTeacher">
+        UPDATE teacher
+        SET activeFlag = -1
+        WHERE teacherID = #{teacherID}
+    </update>
+
+    <select id="getAllQuestion" resultType="com.gxun.jms.pojo.Question">
+        SELECT * FROM question
+        <where>
+            1=1
+            <if test="question!=null">
+                <if test="question.courseID!=0">
+                    AND courseID = ${question.courseID}
+                </if>
+                <if test="question.questionType!=0">
+                    AND questionType=${question.questionType}
+                </if>
+                <if test="question.questionDifficulty!=0">
+                    AND questionDifficulty=${question.questionDifficulty}
+                </if>
+                <if test="question.questionContent!=null">
+                    AND questionContent like '%'+#{question.questionContent}+'%'
+                </if>
+            </if>
+        </where>
+    </select>
+    </mapper>
